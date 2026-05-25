@@ -15,7 +15,8 @@
             "name": "Nostr推荐",
             "type": 3,
             "api": "csp_Nostr",
-            "homePage": "./nostr.html"
+            //"homePage": "./nostr.html"
+            "homePage": "https://www.252035.xyz/xs/tvbox/nostr.html"
         },
         {
             "key": "配置中心",
