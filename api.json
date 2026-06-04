@@ -30,11 +30,11 @@
             "api": "csp_LocalFile"
         },
 		 {
-            "key": "Nostr",
+            "key": "枫叶影视",
             "name": "枫叶影视",
             "type": 3,
             "api": "csp_Nostr",
-            "homePage": "./tml/fy.html"
+            "homePage": "https://www.252035.xyz/xs/tvbox/nostr.html"
         },
         {
             "key": "预告",
