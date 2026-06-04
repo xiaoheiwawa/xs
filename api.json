@@ -36,6 +36,13 @@
             "api": "csp_Nostr",
             "homePage": "https://www.252035.xyz/xs/tvbox/nostr.html"
         },
+		{
+            "key": "音乐",
+            "name": "音乐AZZ",
+            "type": 3,
+            "api": "csp_Nostr",
+            "homePage": "https://xiaoheiwawa.github.io/newbox1/AAZ%E9%9F%B3%E4%B9%90%E7%BD%91.html"
+        },
         {
             "key": "预告",
             "name": "新片｜预告",
