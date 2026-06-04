@@ -1403,6 +1403,13 @@
             "api": "./py/爱听音乐.py"
         },
         {
+            "key": "AAZ音乐网",
+            "name": "AAZ｜音乐",
+            "type": 3,
+            "api": "./js/drpy2.min.js",
+            "ext": "./js/aaz音乐网_cat.js"
+        },
+        {
             "key": "网络直播",
             "name": "网络｜直播",
             "type": 3,
