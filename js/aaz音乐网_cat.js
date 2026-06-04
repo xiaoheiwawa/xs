@@ -57,8 +57,14 @@ var rule = {
             let html = request(input, {headers: rule.headers});
             let m = String(html || '').match(/player\(["']([^"']+)["']\s*,\s*["']([^"']+)["']\)/i);
             if (!m && /\/v\//.test(input)) {
-                let vm = String(html || '').match(/\/plug\/down\.php\?ac=vplay&id=([^&"']+)&q=1080/i) || String(html || '').match(/\/plug\/down\.php\?ac=vplay&id=([^&"']+)&q=720/i);
-                if (vm) url = host + '/plug/down.php?ac=vplay&id=' + encodeURIComponent(vm[1]) + '&q=1080';
+                input = {
+                    parse: 1,
+                    jx: 1,
+                    url: input,
+                    header: {'User-Agent': rule.headers['User-Agent'], 'Referer': host + '/'},
+                    js: ''
+                };
+                return;
             }
             if (m) {
                 if (m[1] === 'music') {
@@ -77,7 +83,14 @@ var rule = {
                         if (obj.url) url = String(obj.url).replace(/\\\//g, '/');
                     } catch (e) {}
                 } else if (m[1] === 'video') {
-                    url = host + '/plug/down.php?ac=vplay&id=' + encodeURIComponent(m[2]) + '&q=1080';
+                    input = {
+                        parse: 1,
+                        jx: 1,
+                        url: input,
+                        header: {'User-Agent': rule.headers['User-Agent'], 'Referer': host + '/'},
+                        js: ''
+                    };
+                    return;
                 }
             }
         }
