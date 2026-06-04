@@ -49,6 +49,54 @@ var rule = {
     }),
     搜索: 'li;.name a&&title;.pic img&&src;;.name a&&href',
     lazy: $js.toString(() => {
-        input = {parse: 1, jx: 1, url: input, header: rule.headers};
+        let host = 'https://www.aaz.cx';
+        let url = input;
+        let referer = host + '/';
+        if (/^https?:\/\//.test(input) && /\.html/i.test(input)) {
+            referer = input;
+            let html = request(input, {headers: rule.headers});
+            let m = String(html || '').match(/player\(["']([^"']+)["']\s*,\s*["']([^"']+)["']\)/i);
+            if (m) {
+                if (m[1] === 'music') {
+                    try {
+                        let res = request(host + '/js/play.php', {
+                            method: 'POST',
+                            headers: {
+                                'User-Agent': rule.headers['User-Agent'],
+                                'Referer': input,
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: 'id=' + encodeURIComponent(m[2]) + '&type=' + encodeURIComponent(m[1])
+                        });
+                        let obj = JSON.parse(res || '{}');
+                        if (obj.url) url = String(obj.url).replace(/\\\//g, '/');
+                    } catch (e) {}
+                } else if (m[1] === 'video') {
+                    for (let q of [1080, 720, 480, 420]) {
+                        try {
+                            let res = request(host + '/plug/down.php?ac=vplay&id=' + encodeURIComponent(m[2]) + '&q=' + q, {
+                                headers: {
+                                    'User-Agent': rule.headers['User-Agent'],
+                                    'Referer': input,
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                }
+                            });
+                            let text = String(res || '').trim().replace(/\\\//g, '/');
+                            let mm = text.match(/https?:\/\/[^"'<>\s]+/i);
+                            if (mm) {
+                                url = mm[0];
+                                break;
+                            }
+                            if (/^https?:\/\//i.test(text)) {
+                                url = text;
+                                break;
+                            }
+                        } catch (e) {}
+                    }
+                }
+            }
+        }
+        input = {parse: 0, jx: 0, url: url, header: {'User-Agent': rule.headers['User-Agent'], 'Referer': referer}};
     })
 };
