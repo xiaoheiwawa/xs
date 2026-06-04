@@ -158,7 +158,7 @@ function aazFetchLrc(lrcUrl, referer) {
 }
 
 var rule = {
-    title: 'AAZ音乐网',
+    title: 'AZ音乐',
     host: AAZ_HOST,
     url: '',
     searchUrl: '/so/**/fypage.html',
