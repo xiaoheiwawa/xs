@@ -181,8 +181,36 @@ var rule = {
         }]
     },
     play_parse: true,
-    推荐: '.video_list li;.name a&&title;.pic img&&src;;.name a&&href',
-    一级: '.video_list li;.name a&&title;.pic img&&src;;.name a&&href',
+    推荐: $js.toString(() => {
+        let pdfh = jsp.pdfh;
+        let pdfa = jsp.pdfa;
+        let pd = jsp.pd;
+        let html = request(rule.host + '/playtype/liuxing/1.html', {headers: rule.headers});
+        let list = [];
+        pdfa(html, '.video_list li, .singer_list li, .play_list li').forEach(function (it) {
+            let href = pd(it, 'a&&href', rule.host);
+            let name = pdfh(it, 'a&&title') || pdfh(it, '.name a&&Text') || pdfh(it, 'a&&Text');
+            if (!href || !name) return;
+            list.push({vod_id: href, vod_name: name, vod_pic: pd(it, 'img&&src', rule.host) || AAZ_PIC, vod_remarks: pdfh(it, '.singer&&Text') || ''});
+        });
+        VODS = list.slice(0, 30);
+    }),
+    一级: $js.toString(() => {
+        let pdfh = jsp.pdfh;
+        let pdfa = jsp.pdfa;
+        let pd = jsp.pd;
+        let html = request(input, {headers: rule.headers});
+        let list = [];
+        pdfa(html, '.video_list li, .singer_list li, .play_list li').forEach(function (it) {
+            let href = pd(it, 'a&&href', rule.host);
+            let name = pdfh(it, 'a&&title') || pdfh(it, '.name a&&Text') || pdfh(it, 'a&&Text');
+            if (!href || !name || /javascript|#|\/user\//i.test(href)) return;
+            let pic = pd(it, 'img&&src', rule.host) || AAZ_PIC;
+            let remark = pdfh(it, '.singer&&Text') || pdfh(it, '.size&&Text') || pdfh(it, '.info&&Text') || pdfh(it, '.playtime&&Text') || '';
+            list.push({vod_id: href, vod_name: name, vod_pic: pic, vod_remarks: remark});
+        });
+        VODS = list;
+    }),
     二级: $js.toString(() => {
         let pdfh = jsp.pdfh;
         let pdfa = jsp.pdfa;
@@ -225,7 +253,20 @@ var rule = {
             }
         }
     }),
-    搜索: '.video_list li;.name a&&title;.pic img&&src;;.name a&&href',
+    搜索: $js.toString(() => {
+        let pdfh = jsp.pdfh;
+        let pdfa = jsp.pdfa;
+        let pd = jsp.pd;
+        let html = request(input, {headers: rule.headers});
+        let list = [];
+        pdfa(html, '.video_list li, .singer_list li, .play_list li').forEach(function (it) {
+            let href = pd(it, 'a&&href', rule.host);
+            let name = pdfh(it, 'a&&title') || pdfh(it, '.name a&&Text') || pdfh(it, 'a&&Text');
+            if (!href || !name || !/\/m\/|\/v\/|\/p\/|\/s\//.test(href)) return;
+            list.push({vod_id: href, vod_name: name, vod_pic: pd(it, 'img&&src', rule.host) || AAZ_PIC, vod_remarks: pdfh(it, '.singer&&Text') || ''});
+        });
+        VODS = list;
+    }),
     lazy: $js.toString(() => {
         let raw = aazDec(input);
         let obj = null;
