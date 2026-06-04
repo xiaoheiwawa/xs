@@ -160,37 +160,29 @@ function aazFetchLrc(lrcUrl, referer) {
 var rule = {
     title: 'AZ音乐',
     host: AAZ_HOST,
-    url: '',
+    url: '/fyclass/fypage.html',
     searchUrl: '/so/**/fypage.html',
     searchable: 2,
     quickSearch: 0,
     filterable: 1,
     headers: {'User-Agent': AAZ_UA, 'Referer': AAZ_HOST + '/'},
     class_name: '华语歌手&欧美歌手&韩国歌手&日本歌手&歌单&MV&TOP榜&新歌榜',
-    class_url: 'singer:huayu&singer:oumei&singer:hanguo&singer:ribrn&playlist:liuxing&mv:index&list:top&list:new',
+    class_url: 'singerlist/huayu/index/index/index&singerlist/oumei/index/index/index&singerlist/hanguo/index/index/index&singerlist/ribrn/index/index/index&playtype/liuxing&mvlist/index&list/top&list/new',
     filter: {
-        'playlist:liuxing': [{
+        'playtype/liuxing': [{
             key: 'id',
             name: '类型',
             value: 'DJ$dj#抖音$douyin#经典$jingdian#BGM$bgm#古风$gufeng#喊麦$hanmai#游戏$youxi#轻音乐$qingyinle#怀旧$huaijiu#佛乐$fule#合唱$hechang#网络$wangluo#儿童$ertong#ACG$acg#影视$yingshi#网红$wanghong#3D$3d#纯音乐$chunyinle#KTV$ktv#乐器$leqi#翻唱$fanchang#店铺专用$dianpu#伤感$shanggan#放松$fangsong#励志$lizhi#开心$kaixin#甜蜜$tianmi#兴奋$xingfen#安静$anjing#治愈$zhiyu#寂寞$jimo#思恋$silian#开车$kaiche#运动$yundong#睡前$shuiqian#跳舞$tiaowu#清晨$qingchen#夜店$yedian#校园$xiaoyuan#咖啡店$kafeidian#旅行$lvxing#工作$gongzuo#广场舞$guangchangwu#70后$70h#80后$80h#90后$90h#00后$00h#10后$10h#流行$liuxing#电子$dianzi#摇滚$yaogun#民歌$minge#民谣$minyao#古典$gudian#嘻哈$xiha#乡村$xiangcun#爵士$jueshi#R.B$rb#华语$huayu#欧美$oumei#韩语$hanyu#粤语$yueyu#日语$riyu#小语种$xiaoyuzhong'.split('#').map(function (x) { let a = x.split('$'); return {n: a[0], v: a[1]}; })
         }],
-        'mv:index': [{
+        'mvlist/index': [{
             key: 'id',
             name: '类型',
             value: [{n: '全部', v: 'index'}, {n: '华语', v: 'huayu'}, {n: '欧美', v: 'oumei'}, {n: '韩语', v: 'hanyu'}, {n: '日语', v: 'riyu'}]
         }]
     },
     play_parse: true,
-    推荐: $js.toString(() => {
-        let html = request(AAZ_HOST + '/playtype/liuxing/1.html', {headers: rule.headers});
-        VODS = aazParseList(html, '.play_list li, .singer_list li, .video_list li, .ilingku_list li, .lkmusic_list li', 'playlist:liuxing').slice(0, 30);
-    }),
-    一级: $js.toString(() => {
-        let ext = typeof MY_FL !== 'undefined' ? MY_FL : {};
-        let url = aazCategoryUrl(MY_CATE, MY_PAGE, ext);
-        let html = request(url, {headers: rule.headers});
-        VODS = aazParseList(html, '.play_list li, .singer_list li, .video_list li, .ilingku_list li, .lkmusic_list li', MY_CATE);
-    }),
+    推荐: '.video_list li;.name a&&title;.pic img&&src;;.name a&&href',
+    一级: '.video_list li;.name a&&title;.pic img&&src;;.name a&&href',
     二级: $js.toString(() => {
         let pdfh = jsp.pdfh;
         let pdfa = jsp.pdfa;
@@ -233,18 +225,7 @@ var rule = {
             }
         }
     }),
-    搜索: $js.toString(() => {
-        let urls = [AAZ_HOST + '/so/' + encodeURIComponent(KEY) + '/' + MY_PAGE + '.html', AAZ_HOST + '/so.php?wd=' + encodeURIComponent(KEY), AAZ_HOST + '/search/' + MY_PAGE + '/?q=' + encodeURIComponent(KEY)];
-        VODS = [];
-        for (let url of urls) {
-            let html = request(url, {headers: rule.headers});
-            let list = aazParseList(html, '.play_list li, .video_list li, .lkmusic_list li, .base_l li, li', 'search').filter(function (v) { return /\/m\/|\/v\/|\/p\/|\/s\//.test(v.vod_id); });
-            if (list.length) {
-                VODS = list;
-                break;
-            }
-        }
-    }),
+    搜索: '.video_list li;.name a&&title;.pic img&&src;;.name a&&href',
     lazy: $js.toString(() => {
         let raw = aazDec(input);
         let obj = null;
