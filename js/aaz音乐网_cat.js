@@ -56,6 +56,10 @@ var rule = {
             referer = input;
             let html = request(input, {headers: rule.headers});
             let m = String(html || '').match(/player\(["']([^"']+)["']\s*,\s*["']([^"']+)["']\)/i);
+            if (!m && /\/v\//.test(input)) {
+                let vm = String(html || '').match(/\/plug\/down\.php\?ac=vplay&id=([^&"']+)&q=1080/i) || String(html || '').match(/\/plug\/down\.php\?ac=vplay&id=([^&"']+)&q=720/i);
+                if (vm) url = host + '/plug/down.php?ac=vplay&id=' + encodeURIComponent(vm[1]) + '&q=1080';
+            }
             if (m) {
                 if (m[1] === 'music') {
                     try {
@@ -73,27 +77,7 @@ var rule = {
                         if (obj.url) url = String(obj.url).replace(/\\\//g, '/');
                     } catch (e) {}
                 } else if (m[1] === 'video') {
-                    for (let q of [1080, 720, 480, 420]) {
-                        try {
-                            let res = request(host + '/plug/down.php?ac=vplay&id=' + encodeURIComponent(m[2]) + '&q=' + q, {
-                                headers: {
-                                    'User-Agent': rule.headers['User-Agent'],
-                                    'Referer': input,
-                                    'X-Requested-With': 'XMLHttpRequest'
-                                }
-                            });
-                            let text = String(res || '').trim().replace(/\\\//g, '/');
-                            let mm = text.match(/https?:\/\/[^"'<>\s]+/i);
-                            if (mm) {
-                                url = mm[0];
-                                break;
-                            }
-                            if (/^https?:\/\//i.test(text)) {
-                                url = text;
-                                break;
-                            }
-                        } catch (e) {}
-                    }
+                    url = host + '/plug/down.php?ac=vplay&id=' + encodeURIComponent(m[2]) + '&q=1080';
                 }
             }
         }
